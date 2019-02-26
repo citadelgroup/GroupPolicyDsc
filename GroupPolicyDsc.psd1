@@ -18,7 +18,7 @@
     CompanyName = 'Citadel Group'
     
     # Copyright statement for this module
-    Copyright = '(c) 2018 Citadel Group. All rights reserved.'
+    Copyright = '(c) 2019 Citadel Group. All rights reserved.'
     
     # Description of the functionality provided by this module
     Description = 'This module provides the functionality needed to manipulate Group Policy.'

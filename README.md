@@ -79,11 +79,11 @@ None
 
 #### Examples
 
-* [Create new Group Policy object](https://github.com/citadelgroup/GroupPolicyDsc/blob/master/Examples/Sample_CreateNewGPPermission.ps1)
+* [Create new Group Policy permission](https://github.com/citadelgroup/GroupPolicyDsc/blob/master/Examples/Sample_CreateNewGPPermission.ps1)
 
-### GroupPolicy
+### GPRegistryValue
 
-Provides a mechanism to create Group Policy objects.
+Provides a mechanism to set Registry Values within Group Policy objects.
 
 #### Requirements
 
@@ -92,7 +92,10 @@ Provides a mechanism to create Group Policy objects.
 #### Parameters
 
 * **[String] Name** _(Key)_: The name of the Group Policy object you want to configure.
-* **[String] Status** _(Write)_: The status of the Group Policy object. { *AllSettingsEnabled* | UserSettingsDisabled | ComputerSettingsDisabled | AllSettingsDisabled }
+* **[String] Key** _(Key)_: The registry key you want to configure.
+* **[String] Name** _(Key)_: The registry key value name you want to configure.
+* **[String] ValueType** _(Write)_: The type of the registry value you want to configure. { DWord | Other }
+* **[String] Value** _(Write)_: The value of the registry you want to configure.
 * **[String] Ensure** _(Write)_: Specifies whether the Group Policy object should be present or absent. { *Present* | Absent }
 
 #### Read-Only Properties from Get-TargetResource
@@ -101,7 +104,7 @@ None
 
 #### Examples
 
-* [Create new Group Policy permission](https://github.com/citadelgroup/GroupPolicyDsc/blob/master/Examples/Sample_CreateNewGroupPolicy.ps1)
+* [Create new GP Registry Value](https://github.com/citadelgroup/GroupPolicyDsc/blob/master/Examples/Sample_CreateNewGPRegistryValue.ps1)
 
 ## Versions
 

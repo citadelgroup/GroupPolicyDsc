@@ -1,8 +1,8 @@
 <#
     .SYNOPSIS
-        Creates a new Group Policy link to the Servers OU for the Group Policy "Test GPO".
+        Creates a new permission allowing MYDOMAIN\AllServers to access and apply the GPO "Test GPO".
 #>
-Configuration Sample_CreateNewGPLink {
+Configuration Sample_CreateNewGPPermission {
     Import-DscResource -ModuleName 'GroupPolicyDsc'
 
     Node localhost {
@@ -12,10 +12,9 @@ Configuration Sample_CreateNewGPLink {
             Name = $GPOName
         }
 
-        GPPermission UserPolicyPermissions {
-            GPOName = $PolicyName
-            TargetName = 'Domain Computers'
-            TargetDomain = $DomainNetbiosName
+        GPPermission GPPermissionConfig {
+            GPOName = $GPOName
+            TargetName = 'MYDOMAIN\AllServers'
         }
     }
 }
