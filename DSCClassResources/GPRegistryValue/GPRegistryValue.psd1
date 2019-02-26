@@ -7,7 +7,7 @@
     ModuleVersion = '0.1.0'    
     
     # ID used to uniquely identify this module
-    GUID = '49155283-0064-4bcc-8f50-7cda03a903c8'
+    GUID = '3eab30a8-5871-4520-91d9-1997c176273b'
     
     # Author of this module
     Author = 'Daniel Snelling'
@@ -16,13 +16,13 @@
     CompanyName = 'Citadel Group'
     
     # Copyright statement for this module
-    Copyright = '(c) 2018 Citadel Group. All rights reserved.'
+    Copyright = '(c) 2019 Citadel Group. All rights reserved.'
     
     # Description of the functionality provided by this module
     # Description = ''
     
     # Minimum version of the Windows PowerShell engine required by this module
-    PowerShellVersion = '5.0'
+    PowerShellVersion = '5.1'
     
     # Name of the Windows PowerShell host required by this module
     # PowerShellHostName = ''

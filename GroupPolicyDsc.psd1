@@ -3,13 +3,13 @@
     #RootModule = 'GroupPolicyDsc.psm1'
     
     # Version number of this module.
-    moduleVersion = '0.5.4'
+    moduleVersion = '0.5.5'
     
     # Supported PSEditions
     # CompatiblePSEditions = @()
     
     # ID used to uniquely identify this module
-    GUID = '4d0f043c-c0f2-46bc-b01b-4a9cc90d37bd'
+    GUID = '1fd2201b-8028-4ee3-a8d2-2942c9c1b107'
     
     # Author of this module
     Author = 'Daniel Snelling'
@@ -89,19 +89,19 @@
         PSData = @{
     
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags = 'CiX', 'DSC', 'DSCResourceKit', 'DSCResource'
+            Tags = 'DesiredStateConfiguration', 'DSC', 'DSCResourceKit', 'DSCResource', 'ActiveDirectory', 'GPO', 'Group Policy', 'GroupPolicy'
     
             # A URL to the license for this module.
-            LicenseUri = 'https://notavailable'
+            LicenseUri = 'https://github.com/citadelgroup/GroupPolicyDsc/blob/master/LICENSE'
     
             # A URL to the main website for this project.
-            ProjectUri = 'https://notavailable'
+            ProjectUri = 'https://github.com/citadelgroup/GroupPolicyDsc'
     
             # A URL to an icon representing this module.
             # IconUri = ''
     
             # ReleaseNotes of this module
-            ReleaseNotes = '* Added Description and Parameter description for composite resources'
+            ReleaseNotes = 'Initial Release'
     
         } # End of PSData hashtable
     
