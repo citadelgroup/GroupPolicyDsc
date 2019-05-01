@@ -4,7 +4,7 @@
     RootModule = 'GroupPolicy.psm1'
     
     # Version number of this module.
-    ModuleVersion = '0.1.0'    
+    ModuleVersion = '1.0.0'
     
     # ID used to uniquely identify this module
     GUID = '42b2619a-dff3-45ac-93cf-0b2a3a8df623'
