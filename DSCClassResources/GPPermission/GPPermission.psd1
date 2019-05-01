@@ -4,7 +4,7 @@
     RootModule = 'GPPermission.psm1'
     
     # Version number of this module.
-    ModuleVersion = '0.1.0'    
+    ModuleVersion = '1.0.0'
     
     # ID used to uniquely identify this module
     GUID = '7a949e5b-520d-4b45-b1f0-5bc9a90807b4'
