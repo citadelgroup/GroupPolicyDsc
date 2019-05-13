@@ -4,8 +4,8 @@ enum Ensure {
 }
 
 enum LinkEnabled {
-    No
     Yes
+    No
 }
 
 enum Enforced {
