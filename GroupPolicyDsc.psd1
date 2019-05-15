@@ -3,7 +3,7 @@
     #RootModule = 'GroupPolicyDsc.psm1'
     
     # Version number of this module.
-    moduleVersion = '1.0.1'
+    moduleVersion = '1.0.2'
     
     # Supported PSEditions
     # CompatiblePSEditions = @()
