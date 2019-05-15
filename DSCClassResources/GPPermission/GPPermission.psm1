@@ -82,7 +82,7 @@ class GPPermission
         $gppermissions = Get-GPPermission -Name $this.GPOName -All
 
         if($this.Ensure -eq [Ensure]::Present) {
-            if($gppermissions.Trustee -contains $this.TargetName) {
+            if($gppermissions.Trustee -contains ($this.TargetName).Split('\')[1]) {
                 return $true
             }
             else {
@@ -90,7 +90,7 @@ class GPPermission
             }
         }
         else {
-            if($gppermissions.Trustee -contains $this.TargetName) {
+            if($gppermissions.Trustee -contains ($this.TargetName).Split('\')[1]) {
                 return $false
             }
             else {
