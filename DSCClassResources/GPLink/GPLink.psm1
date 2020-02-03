@@ -73,10 +73,15 @@ class GPLink
     }
 
     [bool] Test() {
-        $oulinks = (Get-GPInheritance -Target $this.Path).GpoLinks
+        try {
+            $oulinks = (Get-GPInheritance -Target $this.Path).GpoLinks # command doesn't appear to respect ErrorAction Preference
+        }
+        catch {
+            $oulinks = $null
+        }
 
         if($this.Ensure -eq [Ensure]::Present) {
-            if($oulinks.DisplayName -contains $this.GPOName) {
+            if(($null -ne $oulinks) -and ($oulinks.DisplayName -contains $this.GPOName)) {
                 return $true
             }
             else {
@@ -84,7 +89,7 @@ class GPLink
             }
         }
         else {
-            if($oulinks.DisplayName -contains $this.GPOName) {
+            if(($null -ne $oulinks) -and ($oulinks.DisplayName -contains $this.GPOName)) {
                 return $false
             }
             else {

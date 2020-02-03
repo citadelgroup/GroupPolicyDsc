@@ -4,7 +4,7 @@
     RootModule = 'GPLink.psm1'
     
     # Version number of this module.
-    ModuleVersion = '1.0.0'
+    ModuleVersion = '1.0.1'
     
     # ID used to uniquely identify this module
     GUID = 'aea171a9-72ee-4905-a318-b74a06ceab0a'
