@@ -4,11 +4,13 @@ enum Ensure {
 }
 
 enum LinkEnabled {
-    Yes
+    Unspecified
     No
+    Yes
 }
 
 enum Enforced {
+    Unspecified
     No
     Yes
 }
@@ -35,23 +37,30 @@ class GPLink
     [Ensure] $Ensure = [Ensure]::Present
 
     [GPLink] Get() {
-        $oulinks = (Get-GPInheritance -Target $this.Path).GpoLinks
+        $gPLink = (Get-ADObject -Identity $this.Path -Properties gpLink).gpLink # Use instead of Get-GPInheritance to support links to sites
+        $gPLinkMatches = [regex]::new('\[LDAP://((?:[^\];])+);(\d)\]').Matches($gPLink) # Parsing based on https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpol/08090b22-bc16-49f4-8e10-f27a8fb16d18
 
-        if($oulinks.DisplayName -contains $this.GPOName) {
-            $gpo = $oulinks.Where{$_.DisplayName -eq $this.GPOName}
-            $this.Enabled = $gpo.Enabled
-            $this.Enforced = $gpo.Enforced
-            $this.Order = $gpo.Order
+        $gPO = Get-GPO -Name $this.GPOName
+
+        for($i = 0; $i -le $gPLinkMatches.Count-1; $i++) {
+            if($gPLinkMatches[$i].Groups[1].Captures.Value -eq $gPO.Path) { # If this link is a link to the GPO
+                $this.Enabled = ([LinkEnabled]::Yes, [LinkEnabled]::No)[(1 -band $gPLinkMatches[$i].Groups[2].Captures.Value)]
+                $this.Enforced = ([Enforced]::No, [Enforced]::Yes)[(1 -band ($gPLinkMatches[$i].Groups[2].Captures.Value -shr 1))]
+                $this.Order = $i
+            }
         }
 
         return $this
     }
   
     [void] Set() {
-        $oulinks = (Get-GPInheritance -Target $this.Path).GpoLinks
+        $gPLink = (Get-ADObject -Identity $this.Path -Properties gpLink).gpLink # Use instead of Get-GPInheritance to support links to sites
+        $gPLinkMatches = [regex]::new('\[LDAP://((?:[^\];])+);(\d)\]').Matches($gPLink) # Parsing based on https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpol/08090b22-bc16-49f4-8e10-f27a8fb16d18
+
+        $gPO = Get-GPO -Name $this.GPOName
 
         if($this.Ensure -eq [Ensure]::Present) {
-            if($oulinks.DisplayName -contains $this.GPOName) {
+            if($gPLinkMatches.ForEach({$_.Groups[1].Captures.Value}) -contains $gPO.Path) { # If there is a link in the list matching the GPO
                 Set-GPLink -Name $this.GPOName `
                            -Target $this.Path `
                            -LinkEnabled $this.Enabled `
@@ -74,22 +83,28 @@ class GPLink
 
     [bool] Test() {
         try {
-            $oulinks = (Get-GPInheritance -Target $this.Path).GpoLinks # command doesn't appear to respect ErrorAction Preference
+            $gPLink = (Get-ADObject -Identity $this.Path -Properties gpLink).gpLink # Use instead of Get-GPInheritance to support links to sites
+            $gPLinkMatches = [regex]::new('\[LDAP://((?:[^\];])+);(\d)\]').Matches($gPLink) # Parsing based on https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpol/08090b22-bc16-49f4-8e10-f27a8fb16d18
+            $gPO = Get-GPO -Name $this.GPOName
         }
         catch {
-            $oulinks = $null
+            $gPLinkMatches = $null
+            $gPO = $null
         }
 
         if($this.Ensure -eq [Ensure]::Present) {
-            if(($null -ne $oulinks) -and ($oulinks.DisplayName -contains $this.GPOName)) {
-                return $true
+            for($i = 0; $i -le $gPLinkMatches.Count-1; $i++) {
+                if($gPLinkMatches[$i].Groups[1].Captures.Value -eq $gPO.Path) { # If this link is a link to the GPO
+                    if($this.Enabled -eq ([LinkEnabled]::Yes, [LinkEnabled]::No)[(1 -band $gPLinkMatches[$i].Groups[2].Captures.Value)] -and `
+                        $this.Enforced -eq ([Enforced]::No, [Enforced]::Yes)[(1 -band ($gPLinkMatches[$i].Groups[2].Captures.Value -shr 1))]) {
+                        return $true
+                    }
+                }
             }
-            else {
-                return $false
-            }
+            return $false
         }
         else {
-            if(($null -ne $oulinks) -and ($oulinks.DisplayName -contains $this.GPOName)) {
+            if($gPLinkMatches.ForEach({$_.Groups[1].Captures.Value}) -contains $gPO.Path) { # If there is a link in the list matching the GPO
                 return $false
             }
             else {
