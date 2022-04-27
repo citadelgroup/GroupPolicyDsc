@@ -4,15 +4,13 @@ enum Ensure {
 }
 
 enum LinkEnabled {
-    Unspecified
-    No
-    Yes
+    No = 1
+    Yes = 2
 }
 
 enum Enforced {
-    Unspecified
-    No
-    Yes
+    No = 1
+    Yes = 2
 }
 
 [DscResource()]
