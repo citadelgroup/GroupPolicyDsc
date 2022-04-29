@@ -60,7 +60,7 @@ class GPLink
         $gPLink = (Get-ADObject -Identity $this.Path -Properties gpLink).gpLink # Use instead of Get-GPInheritance to support links to sites
         $gPLinkMatches = [regex]::new('\[LDAP://((?:[^\];])+);(\d)\]').Matches($gPLink) # Parsing based on https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpol/08090b22-bc16-49f4-8e10-f27a8fb16d18
 
-        $gPO = Get-GPO -Name $this.GPOName
+        $gPO = Get-GPO -Name $this.GPOName -ErrorAction Stop
 
         if($this.Ensure -eq [Ensure]::Present) {
             if($gPLinkMatches.ForEach({$_.Groups[1].Captures.Value}) -contains $gPO.Path) { # If there is a link in the list matching the GPO
