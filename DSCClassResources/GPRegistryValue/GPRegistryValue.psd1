@@ -4,7 +4,7 @@
     RootModule = 'GPRegistryValue.psm1'
     
     # Version number of this module.
-    ModuleVersion = '1.0.0'
+    ModuleVersion = '1.0.1'
     
     # ID used to uniquely identify this module
     GUID = '3eab30a8-5871-4520-91d9-1997c176273b'
