@@ -96,7 +96,8 @@ Provides a mechanism to set Registry Values within Group Policy objects.
 * **[String] Name** _(Key)_: The registry key value name you want to configure.
 * **[String] ValueType** _(Write)_: The type of the registry value you want to configure. { DWord | Other }
 * **[String] Value** _(Write)_: The value of the registry you want to configure.
-* **[String] Ensure** _(Write)_: Specifies whether the Group Policy object should be present or absent. { *Present* | Absent }
+* **[String] PolicyState** _(Write)_: Whether to enable or disable the registry-based policy setting. { *Set* | Delete }
+* **[String] Ensure** _(Write)_: Specifies whether the registry value should be present (enabled/disabled) or absent (not configured). { *Present* | Absent }
 
 #### Read-Only Properties from Get-TargetResource
 
