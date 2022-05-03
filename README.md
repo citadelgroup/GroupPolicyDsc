@@ -108,6 +108,10 @@ None
 
 ## Versions
 
+### 1.0.1 (Waiting for release)
+
+* GPLink can be used to create links to Active Directory Sites.
+
 ### 1.0.0
 
 * Initial release of GroupPolicyDsc.
