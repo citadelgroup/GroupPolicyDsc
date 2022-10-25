@@ -86,7 +86,7 @@ class GPLink
         else {
             Remove-GPLink -Name $this.GPOName `
                           -Target $this.Path `
-                          $NextClosestSiteDC
+                          -Server $NextClosestSiteDC
         }
     }
 
