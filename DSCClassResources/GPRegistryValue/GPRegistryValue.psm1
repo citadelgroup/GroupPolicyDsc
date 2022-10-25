@@ -35,9 +35,11 @@ class GPRegistryValue
     [Ensure] $Ensure = [Ensure]::Present
 
     [GPRegistryValue] Get() {
+        $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
         $currentvalue = Get-GPRegistryValue -Name $this.Name `
                                      -Key $this.Key `
                                      -ValueName $this.ValueName `
+                                     -Server $NextClosestSiteDC `
                                      -ErrorAction SilentlyContinue
 
         if($null -ne $currentvalue) {
@@ -54,6 +56,7 @@ class GPRegistryValue
     }
   
     [void] Set() {
+        $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
         if($this.Ensure -eq [Ensure]::Present) {
             if($this.PolicyState -eq [PolicyState]::Set) {
                 if($this.ValueType -eq "DWord") {
@@ -61,33 +64,39 @@ class GPRegistryValue
                                         -Key $this.Key `
                                         -ValueName $this.ValueName `
                                         -Value ([Int32]::Parse($this.Value)) `
-                                        -Type $this.ValueType
+                                        -Type $this.ValueType `
+                                        -Server $NextClosestSiteDC
                 }
                 else {
                     Set-GPRegistryValue -Name $this.Name `
                                         -Key $this.Key `
                                         -ValueName $this.ValueName `
                                         -Value $this.Value `
-                                        -Type $this.ValueType
+                                        -Type $this.ValueType `
+                                        -Server $NextClosestSiteDC
                 }
             } else {
                 Set-GPRegistryValue -Name $this.Name `
                                     -Key $this.Key `
                                     -ValueName $this.ValueName `
+                                    -Server $NextClosestSiteDC `
                                     -Disable
             }
         }
         else {
             Remove-GPRegistryValue -Name $this.Name `
                                 -Key $this.Key `
-                                -ValueName $this.ValueName
+                                -ValueName $this.ValueName `
+                                -Server $NextClosestSiteDC
         }
     }
 
     [bool] Test() {
+        $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
         $currentvalue = Get-GPRegistryValue -Name $this.Name `
                                      -Key $this.Key `
                                      -ValueName $this.ValueName `
+                                     -Server $NextClosestSiteDC `
                                      -ErrorAction SilentlyContinue
 
         if($this.Ensure -eq [Ensure]::Present) {
