@@ -35,7 +35,8 @@ class GPLink
     [Ensure] $Ensure = [Ensure]::Present
 
     [GPLink] Get() {
-        $oulinks = (Get-GPInheritance -Target $this.Path).GpoLinks
+        $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
+        $oulinks = (Get-GPInheritance -Target $this.Path -Server $NextClosestSiteDC).GpoLinks
 
         if($oulinks.DisplayName -contains $this.GPOName) {
             $gpo = $oulinks.Where{$_.DisplayName -eq $this.GPOName}
@@ -48,7 +49,8 @@ class GPLink
     }
   
     [void] Set() {
-        $oulinks = (Get-GPInheritance -Target $this.Path).GpoLinks
+        $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
+        $oulinks = (Get-GPInheritance -Target $this.Path -Server $NextClosestSiteDC).GpoLinks
 
         if($this.Ensure -eq [Ensure]::Present) {
             if($oulinks.DisplayName -contains $this.GPOName) {
@@ -56,6 +58,7 @@ class GPLink
                            -Target $this.Path `
                            -LinkEnabled $this.Enabled `
                            -Order $this.Order `
+                           -Server $NextClosestSiteDC `
                            -Enforced $this.Enforced
             }
             else {
@@ -63,18 +66,21 @@ class GPLink
                            -Target $this.Path `
                            -LinkEnabled $this.Enabled `
                            -Order $this.Order `
+                           -Server $NextClosestSiteDC `
                            -Enforced $this.Enforced
             }
         }
         else {
             Remove-GPLink -Name $this.GPOName `
-                          -Target $this.Path
+                          -Target $this.Path `
+                          -Server $NextClosestSiteDC
         }
     }
 
     [bool] Test() {
         try {
-            $oulinks = (Get-GPInheritance -Target $this.Path).GpoLinks # command doesn't appear to respect ErrorAction Preference
+            $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
+            $oulinks = (Get-GPInheritance -Target $this.Path -Server $NextClosestSiteDC).GpoLinks # command doesn't appear to respect ErrorAction Preference
         }
         catch {
             $oulinks = $null
