@@ -18,7 +18,8 @@ class GroupPolicy
     [Ensure] $Ensure = [Ensure]::Present
 
     [GroupPolicy] Get() {
-        $policy = Get-GPO -Name $this.Name -ErrorAction SilentlyContinue
+        $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
+        $policy = Get-GPO -Name $this.Name -Server $NextClosestSiteDC -ErrorAction SilentlyContinue
 
         if($null -ne $policy) {
             $this.Status = $policy.GpoStatus
@@ -32,22 +33,24 @@ class GroupPolicy
     }
   
     [void] Set() {
-        $policy = Get-GPO -Name $this.Name -ErrorAction SilentlyContinue
+        $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
+        $policy = Get-GPO -Name $this.Name -Server $NextClosestSiteDC -ErrorAction SilentlyContinue
 
         if($this.Ensure -eq [Ensure]::Present) {
             if($null -eq $policy) {
-                $policy = New-GPO -Name $this.Name
+                $policy = New-GPO -Name $this.Name -Server $NextClosestSiteDC
             }
 
             $policy.GpoStatus = $this.Status
         }
         else {
-            Remove-GPO -Name $this.Name
+            Remove-GPO -Name $this.Name -Server $NextClosestSiteDC
         }
     }
 
     [bool] Test() {
-        $policy = Get-GPO -Name $this.Name -ErrorAction SilentlyContinue
+        $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
+        $policy = Get-GPO -Name $this.Name -Server $NextClosestSiteDC -ErrorAction SilentlyContinue
 
         if($this.Ensure -eq [Ensure]::Present) {
             if($null -eq $policy) {
