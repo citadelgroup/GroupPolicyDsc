@@ -18,6 +18,7 @@ Configuration Sample_CreateNewGPRegistryValue {
             ValueName = "MySetting"
             ValueType = "DWord"
             Value = "1"
+            PolicyState = "Set"
         }
     }
 }
