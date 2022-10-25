@@ -108,7 +108,7 @@ None
 
 ## Versions
 
-### 1.0.3 (Waiting for release)
+### 1.0.4 (Waiting for release)
 
 * GPLink can be used to create links to Active Directory Sites.
 
