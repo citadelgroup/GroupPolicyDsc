@@ -36,9 +36,10 @@ class GPLink
 
     [GPLink] Get() {
         try {
+             $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
              $gPLink = (Get-ADObject -Identity $this.Path -Properties gpLink).gpLink # Use instead of Get-GPInheritance to support links to sites
              $gPLinkMatches = [regex]::new('\[LDAP://((?:[^\];])+);(\d)\]').Matches($gPLink) # Parsing based on https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpol/08090b22-bc16-49f4-8e10-f27a8fb16d18
-             $gPO = Get-GPO -Name $this.GPOName -ErrorAction Stop
+             $gPO = Get-GPO -Name $this.GPOName -Server $NextClosestSiteDC -ErrorAction Stop
         }
         catch {
             $gPLinkMatches = $null
@@ -57,10 +58,12 @@ class GPLink
     }
   
     [void] Set() {
+        $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
+        
         $gPLink = (Get-ADObject -Identity $this.Path -Properties gpLink).gpLink # Use instead of Get-GPInheritance to support links to sites
         $gPLinkMatches = [regex]::new('\[LDAP://((?:[^\];])+);(\d)\]').Matches($gPLink) # Parsing based on https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpol/08090b22-bc16-49f4-8e10-f27a8fb16d18
 
-        $gPO = Get-GPO -Name $this.GPOName -ErrorAction Stop
+        $gPO = Get-GPO -Name $this.GPOName -Server $NextClosestSiteDC -ErrorAction Stop
 
         if($this.Ensure -eq [Ensure]::Present) {
             if($gPLinkMatches.ForEach({$_.Groups[1].Captures.Value}) -contains $gPO.Path) { # If there is a link in the list matching the GPO
@@ -68,6 +71,7 @@ class GPLink
                            -Target $this.Path `
                            -LinkEnabled $this.Enabled `
                            -Order $this.Order `
+                           -Server $NextClosestSiteDC `
                            -Enforced $this.Enforced
             }
             else {
@@ -75,20 +79,23 @@ class GPLink
                            -Target $this.Path `
                            -LinkEnabled $this.Enabled `
                            -Order $this.Order `
+                           -Server $NextClosestSiteDC `
                            -Enforced $this.Enforced
             }
         }
         else {
             Remove-GPLink -Name $this.GPOName `
-                          -Target $this.Path
+                          -Target $this.Path `
+                          $NextClosestSiteDC
         }
     }
 
     [bool] Test() {
         try {
+            $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
             $gPLink = (Get-ADObject -Identity $this.Path -Properties gpLink).gpLink # Use instead of Get-GPInheritance to support links to sites
             $gPLinkMatches = [regex]::new('\[LDAP://((?:[^\];])+);(\d)\]').Matches($gPLink) # Parsing based on https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpol/08090b22-bc16-49f4-8e10-f27a8fb16d18
-            $gPO = Get-GPO -Name $this.GPOName -ErrorAction Stop
+            $gPO = Get-GPO -Name $this.GPOName -Server $NextClosestSiteDC -ErrorAction Stop
         }
         catch {
             $gPLinkMatches = $null
