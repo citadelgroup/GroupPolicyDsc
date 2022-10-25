@@ -108,6 +108,10 @@ None
 
 ## Versions
 
+### 1.0.4 (Waiting for release)
+
+* All modules discover and connect to the next nearest domain controller rather than the Primary Domain Controller (PDC) emulator.
+
 ### 1.0.0
 
 * Initial release of GroupPolicyDsc.
