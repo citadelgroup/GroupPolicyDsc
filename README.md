@@ -109,7 +109,7 @@ None
 
 ## Versions
 
-### 1.0.3 (Waiting for release)
+### 1.0.4 (Waiting for release)
 
 * GPRegistryValue can be used to set a registry policy to 'Disabled' (via 'PolicySet = Delete') as well as 'Not Configured' (via 'Ensure = Absent')
 
