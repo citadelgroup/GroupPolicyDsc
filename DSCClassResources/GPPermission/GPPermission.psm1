@@ -44,28 +44,32 @@ class GPPermission
     [Ensure] $Ensure = [Ensure]::Present
 
     [GPPermission] Get() {
-        $gppermissions = Get-GPPermission -Name $this.GPOName -All
+        $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
+        $gppermissions = Get-GPPermission -Name $this.GPOName -Server $NextClosestSiteDC -All
 
         if($gppermissions.Trustee -contains $this.TargetName) {
-            $this.PermissionLevel = (Get-GPPermission -Name $this.GPOName -TargetName $this.TargetName -TargetType $this.TargetType).Permission
+            $this.PermissionLevel = (Get-GPPermission -Name $this.GPOName -TargetName $this.TargetName -TargetType $this.TargetType -Server $NextClosestSiteDC).Permission
         }
 
         return $this
     }
   
     [void] Set() {
+        $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
         if($this.Ensure -eq [Ensure]::Present) {
             if($this.Force -eq [Force]::No) {
                 Set-GPPermission -Name $this.GPOName `
                                  -TargetName $this.TargetName `
                                  -TargetType $this.TargetType `
-                                 -PermissionLevel ($this.PermissionLevel).ToString()
+                                 -PermissionLevel ($this.PermissionLevel).ToString() `
+                                 -Server $NextClosestSiteDC
             }
             else {
                 Set-GPPermission -Name $this.GPOName `
                                 -TargetName $this.TargetName `
                                 -TargetType $this.TargetType `
                                 -PermissionLevel ($this.PermissionLevel).ToString() `
+                                -Server $NextClosestSiteDC `
                                 -Replace
             }
         }
@@ -74,12 +78,14 @@ class GPPermission
                              -TargetName $this.TargetName `
                              -TargetType $this.TargetType `
                              -PermissionLevel ([PermissionLevel]::None).ToString() `
+                             -Server $NextClosestSiteDC `
                              -Replace
         }
     }
 
     [bool] Test() {
-        $gppermissions = Get-GPPermission -Name $this.GPOName -All
+        $NextClosestSiteDC = (Get-ADDomainController -Discover -NextClosestSite).HostName.Value
+        $gppermissions = Get-GPPermission -Name $this.GPOName -Server $NextClosestSiteDC -All
 
         if($this.Ensure -eq [Ensure]::Present) {
             if($gppermissions.Trustee.Name -contains ($this.TargetName).Split('\')[1]) {
